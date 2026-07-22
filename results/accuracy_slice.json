@@ -1,0 +1,74 @@
+{
+  "n_contracts": 25,
+  "extraction_errors": 1,
+  "clauses": {
+    "auto-renewal": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 1,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.8889,
+      "truth_present": 5
+    },
+    "notice to terminate": {
+      "tp": 2,
+      "fp": 1,
+      "fn": 1,
+      "tn": 21,
+      "precision": 0.6667,
+      "recall": 0.6667,
+      "f1": 0.6667,
+      "truth_present": 3
+    },
+    "expiration date": {
+      "tp": 9,
+      "fp": 3,
+      "fn": 5,
+      "tn": 8,
+      "precision": 0.75,
+      "recall": 0.6429,
+      "f1": 0.6923,
+      "truth_present": 14
+    },
+    "termination for convenience": {
+      "tp": 7,
+      "fp": 2,
+      "fn": 3,
+      "tn": 13,
+      "precision": 0.7778,
+      "recall": 0.7,
+      "f1": 0.7368,
+      "truth_present": 10
+    },
+    "cap on liability": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 6,
+      "tn": 16,
+      "precision": 1.0,
+      "recall": 0.3333,
+      "f1": 0.5,
+      "truth_present": 9
+    },
+    "minimum commitment": {
+      "tp": 4,
+      "fp": 2,
+      "fn": 1,
+      "tn": 18,
+      "precision": 0.6667,
+      "recall": 0.8,
+      "f1": 0.7273,
+      "truth_present": 5
+    }
+  },
+  "notice_value_accuracy": {
+    "exact": 2,
+    "within_10pct": 0,
+    "wrong": 0,
+    "n": 2,
+    "exact_pct": 100.0,
+    "acceptable_pct": 100.0
+  }
+}

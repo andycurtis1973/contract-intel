@@ -1,0 +1,13 @@
+# CUAD source data (openly downloadable — see README)
+data/CUAD_v1.zip
+data/CUAD_v1/
+data/out/
+
+# generated video intermediates (final .mp4 is kept)
+video/audio/
+video/assets/
+video/out/*.png
+
+__pycache__/
+*.pyc
+.DS_Store
