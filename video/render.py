@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 W, H = 1920, 1080
@@ -53,13 +53,60 @@ def T(d, xy, s, f, fill, anchor="la"):
     d.text(xy, s, font=f, fill=fill, anchor=anchor)
 
 
-def base(kicker=None):
-    img = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, W, 5], fill=MACHINE)
+_BG = None
+
+
+def _bg_gradient():
+    """A soft top-lighter vertical gradient, cached (built once)."""
+    global _BG
+    if _BG is None:
+        top, bot = (27, 32, 43), (10, 12, 17)
+        col = Image.new("RGB", (1, H))
+        ld = col.load()
+        for y in range(H):
+            t = y / (H - 1)
+            ld[0, y] = tuple(int(top[i] + (bot[i] - top[i]) * t) for i in range(3))
+        _BG = col.resize((W, H))
+    return _BG.copy()
+
+
+def base(kicker=None, accent=MACHINE):
+    """Gradient ground + two soft corner glows + a pill kicker + the top accent rule."""
+    img = _bg_gradient()
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    gd.ellipse([W - 840, -400, W + 280, 620], fill=(accent[0], accent[1], accent[2], 42))
+    gd.ellipse([-480, H - 340, 480, H + 340], fill=(57, 135, 229, 22))
+    glow = glow.filter(ImageFilter.GaussianBlur(200))
+    img = Image.alpha_composite(img.convert("RGBA"), glow).convert("RGB")
+    d = ImageDraw.Draw(img, "RGBA")
+    d.rectangle([0, 0, W, 6], fill=accent)
     if kicker:
-        T(d, (110, 84), kicker.upper(), font("mono", 24), DIM)
+        lab = kicker.upper()
+        f = font("mono", 24)
+        tw = d.textlength(lab, font=f)
+        x, y = 110, 72
+        d.rounded_rectangle([x, y, x + tw + 92, y + 54], radius=27,
+                            fill=(255, 255, 255, 14),
+                            outline=(accent[0], accent[1], accent[2], 160), width=1)
+        d.ellipse([x + 24, y + 19, x + 40, y + 35], fill=accent)
+        T(d, (x + 58, y + 27), lab, f, MUT, "lm")
     return img, d
+
+
+def card(d, box, accent=None, side=None, radius=14, fill=CARD, shadow=True):
+    """A raised card: soft drop shadow, hairline border, a lit top edge, and an
+    optional accent bar (top) or rail (left). `d` must be an RGBA ImageDraw."""
+    x0, y0, x1, y1 = box
+    if shadow:
+        for o, a in ((16, 20), (11, 24), (7, 28), (3, 32)):
+            d.rounded_rectangle([x0 + 1, y0 + o, x1 + 1, y1 + o], radius=radius, fill=(0, 0, 0, a))
+    d.rounded_rectangle([x0, y0, x1, y1], radius=radius, fill=fill, outline=RULE, width=1)
+    d.line([x0 + radius, y0 + 1, x1 - radius, y0 + 1], fill=(255, 255, 255, 18))
+    if accent:
+        d.rounded_rectangle([x0, y0, x1, y0 + 6], radius=3, fill=accent)
+    if side:
+        d.rounded_rectangle([x0, y0, x0 + 6, y1], radius=3, fill=side)
 
 
 def ease(t):

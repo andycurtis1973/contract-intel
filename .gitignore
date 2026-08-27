@@ -11,3 +11,6 @@ video/out/*.png
 __pycache__/
 *.pyc
 .DS_Store
+
+# generated deck slide PNGs (rebuilt by deck/build_deck.py)
+deck/slides/
